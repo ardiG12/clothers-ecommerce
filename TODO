@@ -1,0 +1,23 @@
+1 day
+Models:
+Product:
+User: +
+Card:
+
+Serializer:
+Product:
+User: +
+Card:
+
+APIView
+ModelViewSet
+get_user_model()
+
+Url
+
+
+bruno
+swagger
+как писать синтаксис
+что такое card и зачем cardproduct
+Foreign key,many to many,one to many,many to one,one to one +

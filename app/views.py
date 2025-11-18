@@ -2,11 +2,17 @@ from django.shortcuts import render
 from rest_framework import permissions, authentication
 from rest_framework.viewsets import ModelViewSet
 
-from app import models, serializers
+from app.serializers import *
+from app.models import *
+
+class ProfileViewSet(ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
-class User(ModelViewSet):
-    queryset = models.User.objects.all()
-    serializer_class = serializers.UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [authentication.TokenAuthentication]
+class ProductViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer

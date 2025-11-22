@@ -1,23 +1,68 @@
+#1
 Models:
-Product:
+Product: +
 User: +
 Card:
+Category: +
+
 
 Serializer:
-Product:
+Product: +
 User: +
 Card:
+Category +
 
-APIView
-ModelViewSet
-get_user_model()
+APIView +
+ModelViewSet +
+get_user_model() +
 
 Url
 
-
-bruno
+bruno +
 swagger +
-как писать синтаксис
+как писать синтаксис +-
 что такое card и зачем cardproduct
 Foreign key,many to many,one to many,many to one,one to one +
 router
+
+
+#2
+
+SerializerMethodField +
+Nested serializers +
+valiedate
+
+get_serializer_class()
+get_permissions()
+filter_backends
+actions
+
+related_name +
+slug +
+
+
+#3
+
+IsAuthenticated
+IsAdminUser
+AllowAny
+
+Pagination
+PageNumberPagination
+LimitOffsetPagination
+
+
+#4
+
+Django ORM
+
+TokenAuthentication
+JWT (SimpleJWT)
+SessionAuth
+login / logout
+permissions на основе пользователя
+
+#5
+
+django-filter
+Signals

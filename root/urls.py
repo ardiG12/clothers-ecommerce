@@ -5,8 +5,6 @@ from drf_yasg.views import get_schema_view
 from rest_framework import routers, permissions
 from app.views import ProfileViewSet
 
-router = routers.DefaultRouter()
-router.register(r'profiles', ProfileViewSet)
 
 
 schema_view = get_schema_view(
@@ -28,5 +26,4 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('', include('app.urls')),
-    path('', include(router.urls)),
 ]

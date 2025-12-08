@@ -43,24 +43,24 @@ slug +
 
 #3
 
-IsAuthenticated
-IsAdminUser
-AllowAny
+IsAuthenticated +
+IsAdminUser +
+AllowAny +
 
-Pagination
-PageNumberPagination
-LimitOffsetPagination
+Pagination +
+PageNumberPagination +
+LimitOffsetPagination +
 
 
 #4
 
 Django ORM
 
-TokenAuthentication
-JWT (SimpleJWT)
-SessionAuth
-login / logout
-permissions на основе пользователя
+TokenAuthentication +
+JWT (SimpleJWT) +
+SessionAuth +
+login / logout +
+permissions на основе пользователя +
 
 #5
 

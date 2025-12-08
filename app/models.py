@@ -1,13 +1,19 @@
+import uuid
+
+import transaction
 from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator
 from django.db import models
+from django.db.models.base import Model
+from django.db.models.fields import UUIDField
+from django.db.models.fields.related import OneToOneField
 
 User = get_user_model()
 
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone = models.CharField(max_length=13, unique=True)
+    phone = models.CharField(max_length=13, unique=True, null=True, blank=True)
     img = models.ImageField(upload_to='profile', blank=True, null=True)
     reset_code = models.CharField(max_length=10, blank=True, null=True)
 
@@ -21,6 +27,7 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Product(models.Model):
     COLOR_CHOICES = [
@@ -53,4 +60,24 @@ class Product(models.Model):
     image = models.ImageField(upload_to='products', blank=True, null=True)
     rating = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
 
-    category = models.ForeignKey(Category, on_delete=models.CASCADE,related_name="products",null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="products", null=True, blank=True)
+
+
+class Cart(models.Model):
+    user = OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.username}'s Cart"
+
+
+class CartProduct(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart_products")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    @property
+    def total_price(self):
+        return self.product.get_total_price() * self.quantity
+
+    def __str__(self):
+        return f"{self.product.name} - {self.quantity}"

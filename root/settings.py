@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-u3795$6fd%5ry(a$ol$!9v5)$oh3ykkk!*p(7cw540w*lk+-c7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*", "gina-nonjudiciable-tashia.ngrok-free.dev"]
+
+USE_X_FORWARDED_HOST = True #TODO
+
 
 
 # Application definition
@@ -199,3 +202,6 @@ SWAGGER_SETTINGS = {
         }
     },
 }
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

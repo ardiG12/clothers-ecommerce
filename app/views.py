@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from app.filter import ProductFilter
@@ -15,10 +16,6 @@ class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
 
-    # def perform_create(self, serializer):
-    #     serializer.save(user=self.request.user)
-
-
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -26,6 +23,7 @@ class ProductViewSet(ModelViewSet):
     pagination_class = Pagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = ProductFilter
+
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -36,13 +34,20 @@ class RegisterView(generics.CreateAPIView):
 
 class CartViewSet(ModelViewSet):
     serializer_class = CartProductSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         if getattr(self, 'swagger_fake_view', False):
             return CartProduct.objects.none()
         cart, created = Cart.objects.get_or_create(user=self.request.user)
-        return cart.items.all()
+        return cart.cart_products.all()
+
+    @action(detail=False, methods=["post"])
+    def remove(self, request):
+        serializer = RemoveCartSerializer(data=request.data, context={"user": request.user})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "Удалено"}, status=200)
 
     @action(detail=False, methods=["post"])
     def add(self, request):
@@ -65,3 +70,4 @@ class CartViewSet(ModelViewSet):
         item.save()
 
         return Response({"message": "Товар добавлен!"}, status=201)
+

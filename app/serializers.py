@@ -1,8 +1,7 @@
-from rest_framework import serializers
-
 from app import models
 from app.models import User, Profile
-
+from rest_framework import serializers
+from app.models import Cart, CartProduct, Product
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,11 +49,52 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 class CartProductSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(source="product.title", read_only=True)
+    price = serializers.DecimalField(source="product.price", read_only=True,
+                                     max_digits=10, decimal_places=2)
+    image = serializers.ImageField(source="product.image", read_only=True)
+
     class Meta:
-        model = models.Product
-        fields = "__all__"
+        model = models.CartProduct
+        fields = ["id", "title", "price", "quantity", "image"]
 
 
 class AddToCartSerializer(serializers.Serializer):
         product_id = serializers.IntegerField()
         quantity = serializers.IntegerField(default=1)
+
+
+class RemoveCartSerializer(serializers.Serializer):
+    product_id = serializers.IntegerField()
+    quantity = serializers.IntegerField(required=False, min_value=1)
+
+    def save(self, **kwargs):
+        user = self.context["user"]
+        try:
+            cart = Cart.objects.get(user=user)
+        except Cart.DoesNotExist:
+            raise serializers.ValidationError({"message": "Корзина не найдена"})
+
+        product_id = int(self.validated_data["product_id"])  # ⚡ приводим к int
+
+        try:
+            product = Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            raise serializers.ValidationError({"message": "Товар не найден"})
+
+        try:
+            item = CartProduct.objects.get(id=product_id, cart=cart)  # ⚡ ищем по product__id
+        except CartProduct.DoesNotExist:
+            raise serializers.ValidationError({"message": "Товара нет в корзине"})
+
+        quantity = self.validated_data.get("quantity")
+        if quantity:
+            if item.quantity > quantity:
+                item.quantity -= quantity
+                item.save()
+            else:
+                item.delete()
+        else:
+            item.delete()
+
+        return cart
